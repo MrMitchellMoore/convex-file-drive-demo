@@ -16,8 +16,12 @@ export const createFile = mutation({
 
     const user = await getUser(ctx, identity.tokenIdentifier);
 
+    if (!user) {
+      throw new ConvexError("no user with this token found");
+    }
+
     if (
-      !user.orgId.includes(args.orgId) &&
+      !user.orgIds.some((org) => org.orgId === args.orgId) &&
       user.tokenIdentifier !== identity.tokenIdentifier
     ) {
       throw new ConvexError(

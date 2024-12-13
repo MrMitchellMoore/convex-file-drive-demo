@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
+import Header from "@/components/shared/header";
 
 export const metadata: Metadata = {
   title: "File Drive",
@@ -19,7 +20,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ConvexClientProvider>{children}</ConvexClientProvider>
+        <ConvexClientProvider>
+          <Header />
+          {children}
+        </ConvexClientProvider>
       </body>
     </html>
   );

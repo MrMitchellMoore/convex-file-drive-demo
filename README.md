@@ -25,3 +25,5 @@ This project demonstrates a simple file storage and management system built with
 1. Run `npm run build`
 2. Run `npm run start`
 3. Run `npm run deploy`
+
+Left off: 1:06:55

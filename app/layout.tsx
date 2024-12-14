@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ConvexClientProvider } from "../components/providers/ConvexClientProvider";
 import Header from "@/components/shared/header";
 
 export const metadata: Metadata = {
@@ -21,8 +21,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ConvexClientProvider>
-          <Header />
-          {children}
+          <div className="flex flex-col min-h-screen w-full bg-slate-100">
+            <Header />
+            {children}
+          </div>
         </ConvexClientProvider>
       </body>
     </html>

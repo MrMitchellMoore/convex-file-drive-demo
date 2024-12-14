@@ -1,6 +1,26 @@
-import { mutation, query } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { ConvexError, v } from "convex/values";
 import { getUser } from "./users";
+
+async function hasAccessToOrg(
+  ctx: QueryCtx | MutationCtx,
+  tokenIdentifier: string,
+  orgId: string
+) {
+  const user = await getUser(ctx, tokenIdentifier);
+
+  const hasAccess =
+    user.orgIds.find((org) => org.orgId === orgId) ||
+    user.tokenIdentifier.includes(orgId);
+
+  if (!hasAccess) {
+    throw new ConvexError(
+      "You are not authorized to create a file in this organization"
+    );
+  }
+
+  return hasAccess;
+}
 
 export const createFile = mutation({
   args: {
@@ -14,19 +34,14 @@ export const createFile = mutation({
       throw new ConvexError("You must be signed in to create a file");
     }
 
-    const user = await getUser(ctx, identity.tokenIdentifier);
+    const hasAccess = await hasAccessToOrg(
+      ctx,
+      identity.tokenIdentifier,
+      args.orgId
+    );
 
-    if (!user) {
-      throw new ConvexError("no user with this token found");
-    }
-
-    if (
-      !user.orgIds.some((org) => org.orgId === args.orgId) &&
-      user.tokenIdentifier !== identity.tokenIdentifier
-    ) {
-      throw new ConvexError(
-        "You are not authorized to create a file in this organization"
-      );
+    if (!hasAccess) {
+      return [];
     }
 
     await ctx.db.insert("files", {
@@ -45,6 +60,17 @@ export const getFiles = query({
     if (!identity) {
       return [];
     }
+
+    const hasAccess = await hasAccessToOrg(
+      ctx,
+      identity.tokenIdentifier,
+      args.orgId
+    );
+
+    if (!hasAccess) {
+      return [];
+    }
+
     return await ctx.db
       .query("files")
       .withIndex("by_org_id", (q) => q.eq("orgId", args.orgId))

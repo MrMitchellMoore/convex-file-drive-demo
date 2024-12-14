@@ -10,7 +10,7 @@ import { Button } from "../ui/button";
 
 export default function Header() {
   return (
-    <div className="p-4 flex w-full bg-gray-100 border-b border-black">
+    <div className="p-4 flex w-full bg-slate-100 border-black border-b-2">
       <header className="container mx-auto flex gap-2 items-center justify-between">
         <div className="text-lg font-bold">FileDrive</div>
         <div className="flex gap-2">
